@@ -42,7 +42,5 @@ json_map = read_json_file('json_map.json')
 near_index, near_coordinates = return_nearest_point_index(latitude,longitude,json_map)
 print (near_index, near_coordinates)
 
-
-
-
+print (json_map['features'][near_index]['geometry']['coordinates'][0])
 

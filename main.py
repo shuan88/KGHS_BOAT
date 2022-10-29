@@ -1,10 +1,38 @@
-from webbrowser import get
-from folium.plugins import HeatMap
-import folium # 匯入 folium 套件
-import numpy as np
-import random
-import os
 import json
+import os
+import random
+from itertools import product
+from webbrowser import get
+
+import folium  # 匯入 folium 套件
+import matplotlib.pyplot as plt
+import numpy as np
+import sklearn
+from descartes import PolygonPatch
+from folium.plugins import HeatMap
+from shapely.geometry import LineString, MultiPoint, Point, Polygon
+
+
+def heatmap_generator(polygon_bounds):
+    p =Polygon(polygon_bounds)
+    xmin, ymin, xmax, ymax = p.bounds # get the bounds of the polygon
+    n = 1e4 # number of points
+    x = np.arange(np.floor(xmin * n) / n, np.ceil(xmax * n) / n, 1 / n)  # array([-4.857, -4.856, -4.855, -4.854, -4.853])
+    y = np.arange(np.floor(ymin * n) / n, np.ceil(ymax * n) / n, 1 / n)  # array([37.174, 37.175, 37.176, 37.177, 37.178, 37.179, 37.18 , 37.181, 37.182, 37.183, 37.184, 37.185])
+    points = MultiPoint(np.transpose([np.tile(x, len(y)), np.repeat(y, len(x))]))
+    result = points.intersection(p)
+
+    ## shapely.geometry.multipoint.MultiPoint to list
+    python_list = []
+    for i in range(len(result)):
+        python_list.append([float(x) for x in str(result[i]).replace('POINT (','').replace(')','').split(' ')])
+
+    heatmap = np.array(python_list)
+    # np.random.normal(Mean, Standard Deviation), len(python_list))
+    heat_data= np.random.normal(1,3,len(python_list))
+    # append the heat_data to the heatmap array (639,2) to (639,3)
+    heatmap = np.append(heatmap,heat_data.reshape(len(heat_data),1),axis=1)
+    return heatmap[:,[1,0,2]]
 
 ## read json file dir = json_map.json
 def read_json_file(path):
@@ -29,19 +57,17 @@ def return_nearest_point_index(x,y,json_map):
             # using the distance formula : d = abs(xi-x) + abs(yi-y)
             if abs(temp[0]-y)+abs(temp[1]-x) < temp_nearest_distance:
                 temp_nearest_distance = abs(temp[0]-y)+abs(temp[1]-x)
-                nearest_point_features_index = 0 ;
+                nearest_point_features_index = i ;
                 nearest_point = temp
     # print("Index of nearest point in polygon : ",nearest_point_features_index)
     return nearest_point_features_index,[nearest_point[1],nearest_point[0]]
-
-
 
 
 # latitude,longitude= 22.6199759,120.2816580 # 緯度,經度
 latitude,longitude= 22.625266504508858,120.29873388752162 # 緯度,經度
 
 ## Test when latitude and long has bias
-rondom_bound = 0.001 
+rondom_bound = 0.01 
 if rondom_bound > .0:
     latitude,longitude = random_coord_generator(latitude,longitude,rondom_bound)
 
@@ -80,15 +106,6 @@ Crop_location_Marker= folium.Marker(location=near_coordinates,
 fmap.add_child(child=Crop_location_Marker)
 
 
-
-## Add heatmap in map
-    # data shape ((lat,lon),weight)
-data = (np.random.normal(size=(100, 3)) * 0.0001 *
-    np.array([[1, 1, 1]]) +
-    np.array([[latitude,longitude, 1]])).tolist()
-fmap.add_child(HeatMap(data=data))
-
-
 ## Draw Line
 points = [[latitude,longitude],
           near_coordinates]
@@ -97,10 +114,22 @@ fmap.add_child(folium.PolyLine(locations=points, # 座標List
                                color='green')) # 線條寬度
 
 
+## Add heatmap in map
+    # data shape ((lat,lon),weight)
+data = (np.random.normal(size=(100, 3)) * 0.0001 *
+    np.array([[1, 1, 1]]) +
+    np.array([[latitude,longitude, 1]])).tolist()
+fmap.add_child(HeatMap(data=data))
+print(data)
+
+data = heatmap_generator(json_map['features'][near_index]['geometry']['coordinates'][0])
+fmap.add_child(HeatMap(data=data.tolist()))
+print(data)
+
+
 
 ## import GeoJson or TopoJson draw range in map
     # https://github.com/topojson/topojson
-    
 fmap.add_child(folium.GeoJson("json_map.json", name='geojson'))
 
 ## Save the map
