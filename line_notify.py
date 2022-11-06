@@ -1,7 +1,7 @@
 import requests
 
 
-def line_notify(message):
+def message2line(message):
     # read token from line_token.txt
     line_notify_token = open('line_token.txt', 'r').read()
     line_notify_api = 'https://notify-api.line.me/api/notify'
@@ -12,4 +12,4 @@ def line_notify(message):
 
 
 if __name__ == '__main__':
-    line_notify('test')
+    message2line('test')
