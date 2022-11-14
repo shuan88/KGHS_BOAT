@@ -1,3 +1,5 @@
 __pycache__
 map.html
 line_token.txt
+mcu/.pio
+mcu/.vscode
