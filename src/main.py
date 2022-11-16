@@ -12,7 +12,7 @@ from descartes import PolygonPatch
 from folium.plugins import HeatMap
 from shapely.geometry import LineString, MultiPoint, Point, Polygon
 
-from line_notify import message2line
+from src.line_notify import message2line
 
 
 def heatmap_generator(polygon_bounds):

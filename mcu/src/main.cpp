@@ -1,4 +1,6 @@
 #include <WiFi.h>
+#include <MySQL_Connection.h>
+#include <MySQL_Cursor.h>
 #include <SPI.h>
 #include <Wire.h>
 // #include <AsyncTCP.h>
@@ -10,11 +12,22 @@
 #include <OneWire.h>
 #include <DFRobot_EC.h>
 
-#include <TinyGPSPlus.h>
+#include "SoftwareSerial.h"
+#include <Adafruit_GPS.h>
+// #include "neo6mGPS.h"
+
+// #include <TinyGPSPlus.h>
+
 
 const char* ssid = "Gogogo_serverice_IOT";
 const char* password = "Shuan_router_257-9";
 
+IPAddress server_addr(10,0,1,35);  // IP of the MySQL *server* here
+char sql_user[] = "root";              // MySQL user login username
+char sql_password[] = "secret";        // MySQL user login password
+
+WiFiClient client;            // Use this for WiFi instead of EthernetClient
+MySQL_Connection conn((Client *)&client);
 
 /*
 DHT22 humidity and temperature sensor
@@ -129,8 +142,28 @@ float getTemp(){
 DFRobot_EC ec;
 float  voltagePH,voltageEC,phValue,ecValue,temperature = 25;
 
-// GPS sensor
-TinyGPSPlus gps;
+/*
+GPS Module
+  Vcc      --->   3.3V
+  GND      --->   GND
+  TXD      --->   RXD(4)
+  RXD      --->   TXD(3)
+  PS:if wse HardwareSerial Serial1(2);TXD and RX will be 16 and 17
+  Tx     --->   RX(16)
+  Rx     --->   TX(17)
+
+It requires the use of SoftwareSerial, and assumes that you have a
+4800-baud serial GPS device hooked up on pins 4(rx) and 3(tx).
+*/
+
+static const int RXPin = 13, TXPin = 12;
+// static const int RXPin = 12, TXPin = 13;
+static const uint32_t GPSBaud = 9600;
+// neo6mGPS myGPS;
+SoftwareSerial mySerial(RXPin, TXPin);
+Adafruit_GPS GPS(&mySerial);
+
+
 
 
 void setup() {
@@ -145,7 +178,14 @@ void setup() {
   Serial.println("");
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
+
+  // // Connect to SQL Server
+  // Serial.println(WiFi.localIP());
+  //   if (conn.connect(server_addr, 3306, sql_user, sql_password)) {
+  //   delay(1000);
+  // }
+  // else
+  //   Serial.println("Connection failed.");
 
 
   // Initialize device.
@@ -153,7 +193,18 @@ void setup() {
   // ec sensor initialization
   ec.begin();
 
+  // GPS
+  Serial.println(F("Adafruit GPS library basic test!"));
+  GPS.begin(GPSBaud);
+
+  GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
+  // Set the update rate
+  GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);   // 1 Hz update rate
+  // Request updates on antenna status, comment out to keep quiet
+  GPS.sendCommand(PGCMD_ANTENNA);
+
 }
+uint32_t timer = millis();
 
 void loop() {
   // get temperature and humidity from DHT22
@@ -171,17 +222,85 @@ void loop() {
   Serial.println(temperature);
   // get pH value form phSensor 
   
-  // float voltage = analogRead(PH_PIN) / 1024.0*5000;
-  // float phValue = 3.5 * voltage + 0.5;
-  // Serial.print("pH Value: ");
-  // Serial.println(phValue);
+  float voltage = analogRead(EC_PIN) / 1024.0*5000;
+  float phValue = 3.5 * voltage + 0.5;
+  Serial.print("pH Value: ");
+  Serial.println(phValue);
 
   // get EC value form EC sensor
-  voltageEC = analogRead(EC_PIN)/1024.0*5000;
-  ecValue    = ec.readEC(voltageEC,temperature);       // convert voltage to EC with temperature compensation
-  Serial.print(", EC:");
-  Serial.print(ecValue,2);
-  Serial.println("ms/cm");
+  // voltageEC = analogRead(EC_PIN)/1024.0*5000;
+  // ecValue    = ec.readEC(voltageEC,temperature);       // convert voltage to EC with temperature compensation
+  // Serial.print(", EC:");
+  // Serial.print(ecValue,2);
+  // Serial.println("ms/cm");
+
+
+  // get GPS data
+  char c = GPS.read();
+  // if you want to debug, this is a good time to do it!
+  if ((c) && (true))
+    Serial.write(c);
+
+  // if a sentence is received, we can check the checksum, parse it...
+  if (GPS.newNMEAreceived()) {
+    // a tricky thing here is if we print the NMEA sentence, or data
+    // we end up not listening and catching other sentences!
+    // so be very wary if using OUTPUT_ALLDATA and trytng to print out data
+    //Serial.println(GPS.lastNMEA());   // this also sets the newNMEAreceived() flag to false
+
+    if (!GPS.parse(GPS.lastNMEA()))   // this also sets the newNMEAreceived() flag to false
+      return;  // we can fail to parse a sentence in which case we should just wait for another
+  }
+
+  // approximately every 2 seconds or so, print out the current stats
+  if (millis() - timer > 2000) {
+    timer = millis(); // reset the timer
+
+    Serial.print("\nTime: ");
+    if (GPS.hour < 10) { Serial.print('0'); }
+    Serial.print(GPS.hour, DEC); Serial.print(':');
+    if (GPS.minute < 10) { Serial.print('0'); }
+    Serial.print(GPS.minute, DEC); Serial.print(':');
+    if (GPS.seconds < 10) { Serial.print('0'); }
+    Serial.print(GPS.seconds, DEC); Serial.print('.');
+    if (GPS.milliseconds < 10) {
+      Serial.print("00");
+    } else if (GPS.milliseconds > 9 && GPS.milliseconds < 100) {
+      Serial.print("0");
+    }
+    Serial.println(GPS.milliseconds);
+    Serial.print("Date: ");
+    Serial.print(GPS.day, DEC); Serial.print('/');
+    Serial.print(GPS.month, DEC); Serial.print("/20");
+    Serial.println(GPS.year, DEC);
+    Serial.print("Fix: "); Serial.print((int)GPS.fix);
+    Serial.print(" quality: "); Serial.println((int)GPS.fixquality);
+    if (GPS.fix) {
+      Serial.print("Location: ");
+      Serial.print(GPS.latitude, 4); Serial.print(GPS.lat);
+      Serial.print(", ");
+      Serial.print(GPS.longitude, 4); Serial.println(GPS.lon);
+
+      Serial.print("Speed (knots): "); Serial.println(GPS.speed);
+      Serial.print("Angle: "); Serial.println(GPS.angle);
+      Serial.print("Altitude: "); Serial.println(GPS.altitude);
+      Serial.print("Satellites: "); Serial.println((int)GPS.satellites);
+      Serial.print("Antenna status: "); Serial.println((int)GPS.antenna);
+    }
+  }
+  
+  // // Initiate the query class instance
+  // MySQL_Cursor *cur_mem = new MySQL_Cursor(&conn);
+  // // Sample query
+  // char INSERT_SQL[] = "INSERT INTO test_arduino.hello_arduino (message) VALUES ('Hello, Arduino!')";
+
+  // // Execute the query
+  // cur_mem->execute(INSERT_SQL);
+  // // Note: since there are no results, we do not need to read any data
+  // // Deleting the cursor also frees up memory used
+  // delete cur_mem;
+
+
 
   delay(2000);
 
