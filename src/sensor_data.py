@@ -8,8 +8,6 @@ from descartes import PolygonPatch
 from itertools import product
 
 
-    
-
 
 def heatmap_generator(polygon_bounds):
     p =Polygon(polygon_bounds)
