@@ -47,7 +47,18 @@ def lambda_handler(event, context):
           'Access-Control-Allow-Origin': '*'
         },
     }
-  else:
-    response = event['httpMethod']
+  elif event['httpMethod']=='GET':
+
+    data = client.scan(
+      TableName='kghs_boat'
+    )
   
+    response = {
+      'statusCode': 200,
+      'body': json.dumps(data),
+      'headers': {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
+    } 
   return response

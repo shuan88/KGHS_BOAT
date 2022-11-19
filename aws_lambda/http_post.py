@@ -32,7 +32,7 @@ url = "https://ci2fgu1na6.execute-api.ap-northeast-1.amazonaws.com/v1/boat"
 # 回傳的訊息是 502，伺服器內部錯誤，通常這種錯誤都是後端程式執行失敗所造成，詳細輸出可以檢視下圖。
 # response = http_post(url, data)
 
-for i in range(10):
+for i in range(30):
     response = http_post_randomdata(url)
     print(response.text)
     print(response)
