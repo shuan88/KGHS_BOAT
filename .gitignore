@@ -4,3 +4,6 @@ line_token.txt
 mcu/.pio
 mcu/.vscode
 aws_lambda/sam
+aws_lambda/RDS/lambd_RDS.py
+src/sql_test.py
+rds_key.json

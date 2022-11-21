@@ -10,6 +10,7 @@ def http_post(url, body):
     return response
     
 def http_post_randomdata(url):
+    url = "https://ci2fgu1na6.execute-api.ap-northeast-1.amazonaws.com/v1/boat"
     headers = {'Content-Type': 'application/json'}
     post_data= {
     "latitude": "{}".format(random.randint(0, 180)),
