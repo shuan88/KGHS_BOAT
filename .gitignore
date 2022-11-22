@@ -8,3 +8,4 @@ aws_lambda/RDS/lambd_RDS.py
 src/sql_test.py
 rds_key.json
 .DS_Store
+img

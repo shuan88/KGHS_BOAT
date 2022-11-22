@@ -121,9 +121,8 @@ def select_last_N(connection,N=10):
     
     # result is a list of dict so we need to convert it to numpy array
     result_np = np.array([list(i.values()) for i in result])    
-    print(result_np)
-    print(result_np.shape)
-    
+    # print(result_np)
+    # print(result_np.shape)
     return result_np
 
 def save_data_to_csv(connection , name="boat_data"):

@@ -68,6 +68,22 @@ You can also use the following command to install all the requirements in one go
 1. Activate conde envirements `conda activate <environment_name>`
 2. Run main.py `python3 src/main.py`
 
+## Show the Sensor data
+1. Activate conde envirements `conda activate <environment_name>`
+2. (Option)If you want to use the database, you need to change the `load_data()` to `load_data(False , connection)` and uncomment `connection = db_connection()` in previous line
+    - N is the number of data you want to load from the database
+3. Run show_data.py `python3 src/show_data.py`
+4. You will get result images in the img folder
+
+### Result images
+
+|  |  |
+|:-------------------------:|:-------------------------:|
+|<img src="load_data result example.png" width="400">|<img src="load_data result example2.png" width="400">|
+
+## Show the data realtime
+1. Activate conde envirements `conda activate <environment_name>`
+2. 
 ## Query the database
 
 ### Delete or Create a new table from database
@@ -105,3 +121,11 @@ You can also use the following command to install all the requirements in one go
 
 
 
+--- 
+
+# To do list
+
+`src/Dynamically_plot.py` 要加入即時從資料庫抓數據更新的功能
+
+# Reference
+https://hackmd.io/DekxmXS3TmGnyCDMNO2dgA?view

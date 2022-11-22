@@ -5,8 +5,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.ticker import FormatStrFormatter
-from sql_io import read_csv_data
-from sql_io import save_data_to_csv
+# from sql_io import read_csv_data
+# from sql_io import save_data_to_csv
+# from sql_io import select_last_N
+from sql_io import *
+import datetime
 
 '''
 設備異常
@@ -19,11 +22,26 @@ from sql_io import save_data_to_csv
     離群值條件可以用GMM處理
 '''
 
-csv_file_name = "boat_data_1"
-data = read_csv_data(csv_file_name)
+def load_data(fromCSV = True , connection = None , N=100):
+    if fromCSV:
+        csv_file_name = "boat_data_1"
+        data = read_csv_data(csv_file_name)
+    else:
+        # load data from database
+        data = select_last_N(connection, N)
+        # drop first column
+        data = data[: ,1 :]
+    return data
+
+        
+connection = db_connection()
+data = load_data(False, connection)
+connection.close()
+print(data)
+
+
 columns_name = ['latitude', 'longitude', 'Humidity', 'Tempture', 'PH', 'TDS', 'Water_Temp']
 colors = ['r', 'g', 'b', 'c', 'm', 'y', 'k']
-
 ## plt the data using matplotlib
 plt.figure(1) #n must be a different integer for every window
 for i in range(2,7):
@@ -31,6 +49,8 @@ for i in range(2,7):
     # plt.scatter(np.arange(data.shape[0]),data[:,i] , color=colors[i])
     plt.legend()
 
+plt.savefig('./img/sensor_data_multi{}.png'.format(datetime.datetime.now().strftime('%Y%m%d_%H%M%S')))
+# plt.show(block=False)
 
 ## plt multiple plots using matplotlib
 fig , ax = plt.subplots(2,3 , figsize=(10,7))
@@ -98,4 +118,7 @@ ax[1,2].yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
 ax[1,2].xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
     
 plt.show()
+
+# Save the figure
+fig.savefig('./img/sensor_data_multi{}.png'.format(datetime.datetime.now().strftime('%Y%m%d_%H%M%S')))
 
