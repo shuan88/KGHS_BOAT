@@ -9,13 +9,43 @@ import matplotlib.animation as animation
 from sql_io import read_csv_data
 from sql_io import save_data_to_csv
 
+import itertools
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+from matplotlib.ticker import FormatStrFormatter
+from sql_io import read_csv_data
+from sql_io import save_data_to_csv
 
 
 
-def data_gen():
-    for cnt in itertools.count():
-        t = cnt / 10
-        yield t, np.sin(2*np.pi*t) * np.exp(-t/10.)
+csv_file_name = "boat_data_1"
+data = read_csv_data(csv_file_name)
+columns_name = ['latitude', 'longitude', 'Humidity', 'Tempture', 'PH', 'TDS', 'Water_Temp']
+colors = ['r', 'g', 'b', 'c', 'm', 'y', 'k']
+print(data.shape)
+
+# ## plt the data using matplotlib
+# plt.figure(1) #n must be a different integer for every window
+# for i in range(2,7):
+#     plt.plot(data[:,i], label=columns_name[i],color=colors[i])
+#     plt.scatter(np.arange(data.shape[0]),data[:,i] , color=colors[i])
+#     plt.legend()
+
+
+
+
+
+## Gets new data from the csv file
+csv_file_name_2 = "boat_data_2"
+new_data = read_csv_data(csv_file_name_2)
+## remove first len(data) rows from new_data
+new_data = new_data[len(data):,:]
+
+
+## make plot animation using matplotlib
 
 
 

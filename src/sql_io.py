@@ -29,8 +29,8 @@ def db_connection():
 def create_table(connection):
     query = """Create table if not exists boat_data(
             ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            latitude float  DEFAULT 22.625266504508858,
-            longitude float  DEFAULT 120.29873388752162,
+            latitude double  DEFAULT 22.625266504508858,
+            longitude double  DEFAULT 120.29873388752162,
             O_Hum float DEFAULT 47,
             O_Temp float DEFAULT 28,
             PH float DEFAULT 7.8,
@@ -46,8 +46,8 @@ def create_table(connection):
         connection.commit()
         
         
-def delete_table(connection):
-    query = """DROP TABLE boat_data"""
+def delete_table(connection , table_name="boat_data"):
+    query = """DROP TABLE %s""" %(table_name)
     with connection.cursor() as cursor:
         # execute the query
         cursor.execute(query)
@@ -75,9 +75,9 @@ def insert_data_random(connection):
     post_data= {
     "latitude": "{}".format(latitude),
     "longitude": "{}".format(longitude),
-    "O_Hum": "{}".format(random.randrange(0, 100)),
-    "O_Temp": "{}".format(random.randrange(16, 34)),
-    "PH":  "{}".format(random.randrange(4, 10)),
+    "O_Hum": "{}".format(random.randrange(30, 100)),
+    "O_Temp": "{}".format(random.randrange(20, 34)),
+    "PH":  "{}".format(random.randrange(5, 10)),
     "TDS":  "{}".format(random.randrange(0, 451)),
     "W_Temp":  "{}".format(random.randrange(20, 35))
     }
@@ -92,7 +92,7 @@ def insert_data_random(connection):
         
         # commit the changes
         connection.commit()
-    print("insert data success")
+    # print("insert data success")
     
 def select_all(connection):
     query = """SELECT * FROM boat_data"""
@@ -151,22 +151,29 @@ def read_csv_data(name="boat_data"):
 
 if __name__ == "__main__":
     connection = db_connection()
-    # # load json file rds_key.json to connection_details
-    # connection_details = json.load(open("rds_key.json"))
-    # # Connect to the database
-    # connection = pymysql.connect(host=connection_details['host'],
-    #                             user=connection_details['user'],
-    #                             password=connection_details['password'],
-    #                             database=connection_details['database'],
-    #                             cursorclass=pymysql.cursors.DictCursor)
-    data = [22.625266504508858, 120.29873388752162, 47, 28, 7.8, 120, 30]
-    insert_data(connection, data)
-    save_data_to_csv(connection)
 
-    # for i in range(30):
-    #     insert_data_random(connection)
-    #     time.sleep(1)
-    # select_all(connection)
+    # delete_table(connection)
+    # create_table(connection)
+    
+    data = [22.625266504508858, 120.29873388752162, 47, 28, 7.8, 120, 30]
+    
+    
+    insert_data(connection, data)
+    time.sleep(1)
+    select_all(connection)
+
+    for i in range(60):
+        try :
+            insert_data_random(connection)
+            print("insert data success count: {}".format(i))
+            time.sleep(1)
+        except:
+            print("Error inserting data , try again")
+            time.sleep(1)
+    
+    select_all(connection)
+    save_data_to_csv(connection, name="boat_data_2")
+    
     # select_last(connection)
     # select_last_N(connection, 10)
     # create_table(connection)
