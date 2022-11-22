@@ -8,7 +8,16 @@ from matplotlib.ticker import FormatStrFormatter
 from sql_io import read_csv_data
 from sql_io import save_data_to_csv
 
-
+'''
+設備異常
+    pH連續3點無變化
+    導電度為0或超過5,000 μS/cm以 上（偵測極限）
+水質異常
+    離群值條件（時間):導電度連 續3點超出80或低於20分位
+    離群值條件（空間):上下游測 站溫度同時超出80或低於20分位
+    法規限值條件:pH低於6或高於9
+    離群值條件可以用GMM處理
+'''
 
 csv_file_name = "boat_data_1"
 data = read_csv_data(csv_file_name)
@@ -18,8 +27,8 @@ colors = ['r', 'g', 'b', 'c', 'm', 'y', 'k']
 ## plt the data using matplotlib
 plt.figure(1) #n must be a different integer for every window
 for i in range(2,7):
-    plt.plot(data[:,i], label=columns_name[i],color=colors[i])
-    plt.scatter(np.arange(data.shape[0]),data[:,i] , color=colors[i])
+    plt.plot(data[:,i], label=columns_name[i],color=colors[i] , marker='o')
+    # plt.scatter(np.arange(data.shape[0]),data[:,i] , color=colors[i])
     plt.legend()
 
 

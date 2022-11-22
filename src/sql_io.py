@@ -166,13 +166,13 @@ if __name__ == "__main__":
         try :
             insert_data_random(connection)
             print("insert data success count: {}".format(i))
-            time.sleep(1)
+            time.sleep(2)
         except:
             print("Error inserting data , try again")
             time.sleep(1)
     
     select_all(connection)
-    save_data_to_csv(connection, name="boat_data_2")
+    save_data_to_csv(connection, name="boat_data_3")
     
     # select_last(connection)
     # select_last_N(connection, 10)
