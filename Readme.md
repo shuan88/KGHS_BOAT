@@ -83,7 +83,11 @@ You can also use the following command to install all the requirements in one go
 
 ## Show the data realtime
 1. Activate conde envirements `conda activate <environment_name>`
-2. 
+
+
+### Result Gif
+![](animation.gif)
+
 ## Query the database
 
 ### Delete or Create a new table from database

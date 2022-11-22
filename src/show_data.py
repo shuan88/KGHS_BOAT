@@ -5,9 +5,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.ticker import FormatStrFormatter
-# from sql_io import read_csv_data
-# from sql_io import save_data_to_csv
-# from sql_io import select_last_N
 from sql_io import *
 import datetime
 
@@ -22,20 +19,20 @@ import datetime
     離群值條件可以用GMM處理
 '''
 
-def load_data(fromCSV = True , connection = None , N=100):
-    if fromCSV:
-        csv_file_name = "boat_data_1"
-        data = read_csv_data(csv_file_name)
-    else:
-        # load data from database
-        data = select_last_N(connection, N)
-        # drop first column
-        data = data[: ,1 :]
-    return data
+# def load_data(fromCSV = True , connection = None , N=100):
+#     if fromCSV:
+#         csv_file_name = "boat_data_1"
+#         data = read_csv_data(csv_file_name)
+#     else:
+#         # load data from database
+#         data = select_last_N(connection, N)
+#         # drop first column
+#         data = data[: ,1 :]
+#     return data
 
         
 connection = db_connection()
-data = load_data(False, connection)
+data = load_data(fromCSV = False , connection = connection , N=100)
 connection.close()
 print(data)
 

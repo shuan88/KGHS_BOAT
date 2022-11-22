@@ -2,17 +2,23 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from sql_io import read_csv_data
-from sql_io import save_data_to_csv
 from matplotlib.ticker import FormatStrFormatter
+from sql_io import *
 import random
 import itertools
 
-csv_file_name = "boat_data_2"
-data = read_csv_data(csv_file_name)
+
+
+connection = db_connection()
+# data = load_data(fromCSV = True )
+data = load_data(fromCSV = False , connection = connection)
+connection.close()
+print(data)
+print(data.shape)
+
+
 columns_name = ['latitude', 'longitude', 'Humidity', 'Tempture', 'PH', 'TDS', 'Water_Temp']
 colors = ['r', 'g', 'b', 'c', 'm', 'y', 'k']
-print(data.shape)
 
 point_to_show = 10
 
@@ -55,3 +61,8 @@ ani = animation.FuncAnimation(fig,
                               )
 
 plt.show()
+
+# ## Save the animation
+# f= r"./animation.gif"
+# writergif = animation.PillowWriter(fps=30) 
+# ani.save(f, writer=writergif)

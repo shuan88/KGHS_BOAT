@@ -5,6 +5,17 @@ import time
 import numpy as np
 import pandas as pd
 
+
+def load_data(fromCSV = True ,csv_file_name= "boat_data_2",connection = None , N=100):
+    if fromCSV:
+        data = read_csv_data(csv_file_name)
+    else:
+        # load data from database
+        data = select_last_N(connection, N)
+        # drop first column
+        data = data[: ,1 :]
+    return data
+
 def connect_data_to_json():
     host='HOST_NAME'
     user='USER_NAME'
@@ -149,32 +160,35 @@ def read_csv_data(name="boat_data"):
 
 
 if __name__ == "__main__":
-    connection = db_connection()
+    try:
+        connection = db_connection()
 
-    # delete_table(connection)
-    # create_table(connection)
-    
-    data = [22.625266504508858, 120.29873388752162, 47, 28, 7.8, 120, 30]
-    
-    
-    insert_data(connection, data)
-    time.sleep(1)
-    select_all(connection)
+        # delete_table(connection)
+        # create_table(connection)
+        
+        data = [22.625266504508858, 120.29873388752162, 47, 28, 7.8, 120, 30]
+        
+        
+        insert_data(connection, data)
+        time.sleep(1)
+        select_all(connection)
 
-    for i in range(60):
-        try :
-            insert_data_random(connection)
-            print("insert data success count: {}".format(i))
-            time.sleep(2)
-        except:
-            print("Error inserting data , try again")
-            time.sleep(1)
-    
-    select_all(connection)
-    save_data_to_csv(connection, name="boat_data_3")
-    
-    # select_last(connection)
-    # select_last_N(connection, 10)
-    # create_table(connection)
-    # delete_table(connection)
-    connection.close()
+        for i in range(60):
+            try :
+                insert_data_random(connection)
+                print("insert data success count: {}".format(i))
+                time.sleep(2)
+            except:
+                print("Error inserting data , try again")
+                time.sleep(1)
+        
+        select_all(connection)
+        save_data_to_csv(connection, name="boat_data_3")
+        
+        # select_last(connection)
+        # select_last_N(connection, 10)
+        # create_table(connection)
+        # delete_table(connection)
+        connection.close()
+    except KeyboardInterrupt:    
+        connection.close()
