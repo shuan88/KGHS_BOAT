@@ -86,7 +86,8 @@ You can also use the following command to install all the requirements in one go
 
 
 ### Result Gif
-![](animation.gif)
+<!-- animation.gif -->
+<img src="animation.gif" width="400">
 
 ## Query the database
 
