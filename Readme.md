@@ -15,7 +15,8 @@ You can also use the following command to install all the requirements in one go
 > https://stackoverflow.com/questions/35802939/install-only-available-packages-using-conda-install-yes-file-requirements-t
 
 
-## Try if the environment works
+
+## Check if the environment is working
 
 1. Activate conde envirements `conda activate <environment_name>`
 2. Run main.py `python3 src/main.py`
@@ -25,24 +26,79 @@ You can also use the following command to install all the requirements in one go
 
 # AWS
 
+Select the instance type and the region
+The region setup is important because it will affect the latency of the server
+So this time we choose  `ap-notheast-1` (Tokyo) as the region.
+![](https://d1.awsstatic.com/local/osaka-region/aws_region_osaka_banner_white_2.deaf4d377bcff96a777da5b6bd0605eaec843ce7.png)
 
 ## AWS RDS
 
-### Create a new RDS instance
+1. Create a new RDS instance
+2. Choose the database engine as `MySQL`
+3. Configure VPC and subnet group as the same as the EC2 and Lambda instance
+4. Add the database name, username and password
+5. Connict to the database using MySQL Workbench and create the database
+
+NOTE: The database name is case sensitive
+
+![rds mysql](https://miro.medium.com/max/720/1*J3PxWDBSQvKYGEibertmuw.jpeg)
 
 
-### Set the security group(VPC) to allow access from your IP
 
+The final structure of the AWS will be like this. The RDS is the database that we will use to store the data. The EC2 is the server that we will use to run the code. The S3 is the storage that we will use to store the data.
+
+
+
+
+
+### Create VPC and Subnet
+- Set the security group(VPC) to allow access from your IP
+
+
+![](https://docs.aws.amazon.com/zh_tw/vpc/latest/peering/images/peering-intro-diagram.png)
+The VPC is the virtual private cloud that we will use to run the code.
+
+
+
+The security group is the firewall for your RDS instance. You can set the security group to allow access from your IP. This way, you can access the database from your local machine.
+
+![](https://blog.shikisoft.com/assets/images/post_imgs/20171023/aws-lambda-vpc-rds.png)
+The image show how to set the security group to allow access from your IP.
 
 ### Connect to the RDS instance
 
 
 ## Lambda
 
-### Create a new Lambda function
+
+![](https://dz2cdn1.dzone.com/storage/temp/12918536-1578715967542.png)
+
+
+
+#### Install the requirements in the Lambda function
+<!-- https://jumping-code.com/2021/07/28/aws-lambda-python-packages/ -->
+1. Install the requirements in the Lambda function
+    ```bash
+    $ mkdir python
+    $ cd python
+    
+    # Install single package
+    $ pip install --target . requests
+    
+    # Install multiple packages
+    $ pip install --target . -r requirements.txt
+    ```
+2. Packageing to zip
+    ```bash
+    $ zip -r9 ${OLDPWD}/function.zip .
+    $ cd $OLDPWD
+    $ zip -g function.zip lambda_function.py
+    ```
+3. 
 
 
 ### Use the Lambda function to connect to the RDS instance
+
 
 
 ### Handle the Lambda function from the API Gateway
@@ -82,12 +138,15 @@ You can also use the following command to install all the requirements in one go
 |<img src="load_data result example.png" width="400">|<img src="load_data result example2.png" width="400">|
 
 ## Show the data realtime
+
 1. Activate conde envirements `conda activate <environment_name>`
 
 
-### Result Gif
-<!-- animation.gif -->
+The result will be shown like this
+
 <img src="animation.gif" width="400">
+
+
 
 ## Query the database
 
