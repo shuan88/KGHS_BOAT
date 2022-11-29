@@ -248,7 +248,7 @@ Useing the following hardware
 
 ## Software
 
-## Setup
+### Setup
 1. Open PlatformIO plugin in VScode
 2. Open the project folder `mcu`
 3. Open `src/main.cpp`
