@@ -318,7 +318,7 @@ void loop() {
 
   // if latitude and longitude are not zero, save to longitude and latitude
   // else, useing the random number to simulate the data
-  // range base on latitude,longitude= 22.625266504508858,120.29873388752162 +-0.5%
+  // range base on latitude,longitude= 22.625266504508858,120.29873388752162 +-0.05%
 
   float longitude = 0;
   float latitude = 0;
@@ -326,8 +326,8 @@ void loop() {
     longitude = GPS.longitude;
     latitude = GPS.latitude;
   } else {
-    longitude = 120.29873388752162 + random(-5, 5) / 1E7;
-    latitude = 22.625266504508858 + random(-5, 5) / 1E7;
+    longitude = 120.29873388752162 + random(-5, 5) / 1E6;
+    latitude = 22.625266504508858 + random(-5, 5) / 1E6;
   }
 
 

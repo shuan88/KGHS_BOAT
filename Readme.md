@@ -258,6 +258,9 @@ Useing the following hardware
    - If the terminal showing Connecting.......... and took a long time to load, you can try to press the `boot` button on the ESP32 and upload the code again
 6. Open the serial monitor and you will see the result
 7. If you don't want to use the serial monitor, you can comment the `Serial.begin(115200)` and `Serial.println()` in `src/main.cpp`'
+   - You can use replace (cmd + F) to replace `Serial.begin(115200)` to `//Serial.begin(115200)` and `Serial.println()` to `//Serial.println()`
+8. Reverse the step to use the serial monitor again
+    - Replace the `//Serial.begin(115200)` to `Serial.begin(115200)` and `//Serial.println()` to `Serial.println()`
 
 ### Defult ini setting
 
