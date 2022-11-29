@@ -82,6 +82,7 @@ fig = plt.figure(1) #n must be a different integer for every window
 
 legend_counter = 0
 error_counter = 0
+error_counter_bound = 3
 
 # While keyborad interrupt , close the figure
 while True :
@@ -121,9 +122,10 @@ while True :
         error_counter += 1
         print("Abnormal data: ",columns_name[err_index], ":" ,data[err_index,:])
         
-        if error_counter >= 3:
+        if error_counter >= error_counter_bound:
             print("Abnormal data is over 3 times , send email")
             error_counter = 0
+            error_counter_bound = error_counter_bound**2 # increase the error_counter_bound
             """
             Message to Line
             Error_message:
