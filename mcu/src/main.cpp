@@ -1,10 +1,10 @@
 #include <WiFi.h>
-#include <MySQL_Connection.h>
-#include <MySQL_Cursor.h>
 #include <SPI.h>
 #include <Wire.h>
 // #include <AsyncTCP.h>
 // #include "ESPAsyncWebServer.h"
+// #include <MySQL_Connection.h>
+// #include <MySQL_Cursor.h>
 #include <HTTPClient.h>
 
 #include <Adafruit_Sensor.h>
@@ -20,8 +20,10 @@
 // #include <TinyGPSPlus.h>
 
 
-const char* ssid = "Gogogo_serverice_IOT";
-const char* password = "Shuan_router_257-9";
+const char* ssid = "Annie's";
+const char* password = "20060603";
+// const char* ssid = "Gogogo_serverice_IOT";
+// const char* password = "Shuan_router_257-9";
 
 
 /*
