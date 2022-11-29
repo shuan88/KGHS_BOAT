@@ -10,3 +10,4 @@ rds_key.json
 .DS_Store
 img
 .ipynb_checkpoints
+src/__pycache__

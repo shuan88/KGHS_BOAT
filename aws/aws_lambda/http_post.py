@@ -10,7 +10,6 @@ def http_post(url, body):
     return response
     
 def http_post_randomdata(url):
-    url = "https://ci2fgu1na6.execute-api.ap-northeast-1.amazonaws.com/v1/boat"
     headers = {'Content-Type': 'application/json'}
     post_data= {
     "latitude": "{}".format(random.randint(0, 180)),
@@ -26,16 +25,19 @@ def http_post_randomdata(url):
 
 
 # load event.json
-data = json.load(open('aws_lambda/event.json'))
-# url = "https://1u2kc5xwxb.execute-api.ap-northeast-1.amazonaws.com/default"
-# url = " https://syk68fc6vl.execute-api.ap-northeast-1.amazonaws.com/default/ddb_insert"
-url = "https://ci2fgu1na6.execute-api.ap-northeast-1.amazonaws.com/v1/boat"
+data = json.load(open('aws/aws_lambda/event.json'))
+# url = "https://ci2fgu1na6.execute-api.ap-northeast-1.amazonaws.com/v1/boat"
+url = "https://wco6y0ab82.execute-api.ap-northeast-1.amazonaws.com/default/Rds_Query"
+
 # 回傳的訊息是 502，伺服器內部錯誤，通常這種錯誤都是後端程式執行失敗所造成，詳細輸出可以檢視下圖。
 # response = http_post(url, data)
 
-for i in range(30):
+for i in range(3):
     response = http_post_randomdata(url)
     print(response.text)
     print(response)
+    print(response.request.url)
+    print(response.request.body)
+    print(response.request.headers)
     # sleep 1 second
     sleep(1)

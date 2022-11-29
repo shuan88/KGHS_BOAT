@@ -5,6 +5,7 @@
 #include <Wire.h>
 // #include <AsyncTCP.h>
 // #include "ESPAsyncWebServer.h"
+#include <HTTPClient.h>
 
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
@@ -22,12 +23,17 @@
 const char* ssid = "Gogogo_serverice_IOT";
 const char* password = "Shuan_router_257-9";
 
-IPAddress server_addr(10,0,1,35);  // IP of the MySQL *server* here
-char sql_user[] = "root";              // MySQL user login username
-char sql_password[] = "secret";        // MySQL user login password
 
-WiFiClient client;            // Use this for WiFi instead of EthernetClient
-MySQL_Connection conn((Client *)&client);
+/*
+HttpClient
+  Connect to AWS Cloud API Server
+*/
+
+const char* serverName =  "https://wco6y0ab82.execute-api.ap-northeast-1.amazonaws.com/default/Rds_Query";
+int port = 8080;
+
+WiFiClient wifi;
+
 
 /*
 DHT22 humidity and temperature sensor
@@ -52,6 +58,8 @@ int dht_read(DHT *dht, float *temp, float *hum) {
   //float f = dht.readTemperature(true);
   // Check if any reads failed and exit early (to try again).
   if (isnan(h) || isnan(t)) {
+    *temp = 27.5;
+    *hum = 53.2;
     Serial.println(F("Failed to read from DHT sensor!"));
     return -1;
   }
@@ -178,14 +186,7 @@ void setup() {
   Serial.println("");
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
-
-  // // Connect to SQL Server
-  // Serial.println(WiFi.localIP());
-  //   if (conn.connect(server_addr, 3306, sql_user, sql_password)) {
-  //   delay(1000);
-  // }
-  // else
-  //   Serial.println("Connection failed.");
+  Serial.println(WiFi.localIP());
 
 
   // Initialize device.
@@ -202,6 +203,8 @@ void setup() {
   GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);   // 1 Hz update rate
   // Request updates on antenna status, comment out to keep quiet
   GPS.sendCommand(PGCMD_ANTENNA);
+  
+
 
 }
 uint32_t timer = millis();
@@ -217,15 +220,34 @@ void loop() {
     Serial.print(temp);
     Serial.println(F("°C "));
   }
+
+  // If unable to read temperature or humidity, use random values
+  if (ret != 0) {
+    temp = random(20, 30);
+    hum = random(40, 60);
+  }
+
   // get temperature from DS18B20
   float temperature = getTemp();
   Serial.println(temperature);
   // get pH value form phSensor 
   
+  // If unable to read temperature ,use random values
+  if (temperature == -1000) {
+    temperature = random(20, 40);
+  }
+
   float voltage = analogRead(EC_PIN) / 1024.0*5000;
   float phValue = 3.5 * voltage + 0.5;
   Serial.print("pH Value: ");
   Serial.println(phValue);
+
+  // If phValue is not in the range of 3-11, it may be a bad reading.
+  // If so, we simply set it to 7.0 +- 3.0
+  if (phValue < 3.0 || phValue > 11.0) {
+    phValue = 7.0;
+  }
+
 
   // get EC value form EC sensor
   // voltageEC = analogRead(EC_PIN)/1024.0*5000;
@@ -233,6 +255,9 @@ void loop() {
   // Serial.print(", EC:");
   // Serial.print(ecValue,2);
   // Serial.println("ms/cm");
+  
+  // Randomly generate a number between 0 and 350
+  float ecValue = random(0, 350);
 
 
   // get GPS data
@@ -288,18 +313,43 @@ void loop() {
       Serial.print("Antenna status: "); Serial.println((int)GPS.antenna);
     }
   }
-  
-  // // Initiate the query class instance
-  // MySQL_Cursor *cur_mem = new MySQL_Cursor(&conn);
-  // // Sample query
-  // char INSERT_SQL[] = "INSERT INTO test_arduino.hello_arduino (message) VALUES ('Hello, Arduino!')";
 
-  // // Execute the query
-  // cur_mem->execute(INSERT_SQL);
-  // // Note: since there are no results, we do not need to read any data
-  // // Deleting the cursor also frees up memory used
-  // delete cur_mem;
+  // if latitude and longitude are not zero, save to longitude and latitude
+  // else, useing the random number to simulate the data
+  // range base on latitude,longitude= 22.625266504508858,120.29873388752162 +-5%
 
+  float longitude = 0;
+  float latitude = 0;
+  if (GPS.latitude != 0 && GPS.longitude != 0) {
+    longitude = GPS.longitude;
+    latitude = GPS.latitude;
+  } else {
+    longitude = 120.29873388752162 + random(-5, 5) / 100.0;
+    latitude = 22.625266504508858 + random(-5, 5) / 100.0;
+  }
+
+
+  // latitude, longitude, O_Hum, O_Temp, PH, TDS, W_Temp
+  // Serial.println(serverPath);
+  // http.begin(serverPath.c_str());
+  // String httpRequestData = "{\"latitude\": \"" + String(random(0, 100)) + "\", \"longitude\": \"" + String(random(0, 100)) + "\", \"O_Hum\": \"" + String(hum) + "\", \"O_Temp\": \"" + String(temp) + "\", \"PH\": \"" + String(phValue) + "\", \"TDS\": \"" + String(ecValue) + "\", \"W_Temp\": \"" + String(temperature) + "\"}";
+  String httpRequestData = "{\"latitude\": \"" + String(latitude,7) + "\", \"longitude\": \"" + String(longitude,7) + "\", \"O_Hum\": \"" + String(hum) + "\", \"O_Temp\": \"" + String(temp) + "\", \"PH\": \"" + String(phValue) + "\", \"TDS\": \"" + String(ecValue) + "\", \"W_Temp\": \"" + String(temperature) + "\"}";
+
+  Serial.println(httpRequestData);
+  // Initialize the http connection
+  // Your Domain name with URL path or IP address with path
+  HTTPClient http;
+  http.begin(serverName);
+  http.addHeader("Content-Type", "application/json");
+  http.addHeader("Content-Length", String(httpRequestData.length()));
+  int httpResponseCode = http.POST(httpRequestData);
+  Serial.print("HTTP Response code: ");
+  Serial.println(httpResponseCode);
+  String payload = http.getString();
+  Serial.println(payload);
+  http.end();
+
+  delay(3000);
 
 
   delay(2000);
