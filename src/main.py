@@ -78,7 +78,7 @@ if __name__ == "__main__":
 
     ## Test when latitude and long has bias
     rondom_bound = 0.01 
-    if rondom_bound > .0:
+    if rondom_bound < .0:
         latitude,longitude = random_coord_generator(latitude,longitude,rondom_bound)
 
     
@@ -146,7 +146,7 @@ if __name__ == "__main__":
 
     ## Save the map
     fmap.save(os.path.join(root,filename))
-    fmap.save('map.html')
+    fmap.save(filename)
 
     ## Open the map.html from the browser
     webbrowser.open('file://' + os.path.realpath(filename))

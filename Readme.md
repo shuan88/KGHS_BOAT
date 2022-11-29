@@ -175,6 +175,13 @@ The result will be shown like this
 
 <img src="animation.gif" width="400">
 
+## Show the data realtime version 2
+
+1. Activate conde envirements `conda activate <environment_name>`
+2. Run Realtime_plot.py `python3 src/Realtime_plot.py`
+3. Now you can see the data realtime
+4. If error occurs 3 times, the program will send the error message to the line group
+
 
 
 ## Query the database
