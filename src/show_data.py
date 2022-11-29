@@ -16,7 +16,6 @@ import datetime
     離群值條件（時間):導電度連 續3點超出80或低於20分位
     離群值條件（空間):上下游測 站溫度同時超出80或低於20分位
     法規限值條件:pH低於6或高於9
-    離群值條件可以用GMM處理
 '''
 
 # def load_data(fromCSV = True , connection = None , N=100):

@@ -169,21 +169,21 @@ if __name__ == "__main__":
         data = [22.625266504508858, 120.29873388752162, 47, 28, 7.8, 120, 30]
         
         
-        insert_data(connection, data)
-        time.sleep(1)
-        select_all(connection)
-
-        for i in range(60):
-            try :
-                insert_data_random(connection)
-                print("insert data success count: {}".format(i))
-                time.sleep(2)
-            except:
-                print("Error inserting data , try again")
-                time.sleep(1)
+        # insert_data(connection, data)
+        # time.sleep(1)
+        # select_all(connection)
+        # # insert random data into database
+        # for i in range(60):
+        #     try :
+        #         insert_data_random(connection)
+        #         print("insert data success count: {}".format(i))
+        #         time.sleep(2)
+        #     except:
+        #         print("Error inserting data , try again")
+        #         time.sleep(1)
         
-        select_all(connection)
-        save_data_to_csv(connection, name="boat_data_3")
+        # select_all(connection)
+        save_data_to_csv(connection, name="boat_data_1129")
         
         # select_last(connection)
         # select_last_N(connection, 10)

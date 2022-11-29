@@ -10,8 +10,8 @@ import itertools
 
 
 connection = db_connection()
-# data = load_data(fromCSV = True )
-data = load_data(fromCSV = False , connection = connection)
+data = load_data(fromCSV = True , "csv/boat_data_1129") # load data from csv
+# data = load_data(fromCSV = False , connection = connection) # load data from database
 connection.close()
 print(data)
 print(data.shape)

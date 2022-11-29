@@ -202,7 +202,7 @@ The result will be shown like this
 3. Run main.py `python3 src/sql_io.py`
 
 ### Export data from database to csv file
-1. Uncomment `save_data_to_csv(connection , name = boat_data_3)` in `src/sql_io.py`
+1. Uncomment `save_data_to_csv(connection , name = {name to save})` in `src/sql_io.py`
     - You can change the name of the csv file by changing the `name` parameter
 2. Activate conde envirements `conda activate <environment_name>`
 3. Run main.py `python3 src/sql_io.py`
