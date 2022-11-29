@@ -245,7 +245,7 @@ void loop() {
   // If phValue is not in the range of 3-11, it may be a bad reading.
   // If so, we simply set it to 7.0 +- 3.0
   if (phValue < 3.0 || phValue > 11.0) {
-    phValue = 7.0;
+    phValue = random(4, 10);
   }
 
 
@@ -324,8 +324,8 @@ void loop() {
     longitude = GPS.longitude;
     latitude = GPS.latitude;
   } else {
-    longitude = 120.29873388752162 + random(-5, 5) / 1E-7;
-    latitude = 22.625266504508858 + random(-5, 5) / 1E-7;
+    longitude = 120.29873388752162 + random(-5, 5) / 1E7;
+    latitude = 22.625266504508858 + random(-5, 5) / 1E7;
   }
 
 

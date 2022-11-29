@@ -32,7 +32,9 @@ import os
 
         
 connection = db_connection()
-data = load_data(fromCSV = False , connection = connection , N=100)
+data = load_data(fromCSV = False , connection = connection , N=20) # load data from database
+# data = load_data(fromCSV = True , csv_file_name ="boat_data_1129") # load data from csv
+
 connection.close()
 print(data)
 
