@@ -7,6 +7,7 @@ import matplotlib.animation as animation
 from matplotlib.ticker import FormatStrFormatter
 from sql_io import *
 import datetime
+import os
 
 '''
 設備異常
@@ -115,6 +116,10 @@ ax[1,2].xaxis.set_major_formatter(FormatStrFormatter('%.2f'))
     
 plt.show()
 
+
+# if path "./img" not exist , create it
+if not os.path.exists('./img'):
+    os.makedirs('./img')
 # Save the figure
 fig.savefig('./img/sensor_data_multi{}.png'.format(datetime.datetime.now().strftime('%Y%m%d_%H%M%S')))
 

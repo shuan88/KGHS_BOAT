@@ -146,21 +146,7 @@ if __name__ == "__main__":
 
     ## Save the map
     fmap.save(os.path.join(root,filename))
-    fmap.save('map2.html')
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    fmap.save('map.html')
 
     ## Open the map.html from the browser
     webbrowser.open('file://' + os.path.realpath(filename))
