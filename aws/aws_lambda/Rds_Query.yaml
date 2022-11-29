@@ -1,0 +1,23 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: An AWS Serverless Specification template describing your function.
+Resources:
+  RdsQuery:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.9
+      CodeUri: .
+      Description: ''
+      MemorySize: 128
+      Timeout: 3
+      Role: 'arn:aws:iam::232382954765:role/getDataFromDynamoDB'
+      VpcConfig:
+        SecurityGroupIds:
+          - sg-036ce7556ad0fa23f
+        SubnetIds:
+          - subnet-0f6e6f5b3504a9898
+          - subnet-077fa95cb4f6e011d
+          - subnet-0c50430cda0efbcd2
+      Layers:
+        - 'arn:aws:lambda:ap-northeast-1:232382954765:layer:sql_function:1'

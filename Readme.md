@@ -94,24 +94,53 @@ The image show how to set the security group to allow access from your IP.
     $ cd $OLDPWD
     $ zip -g function.zip lambda_function.py
     ```
-3. 
+3. Upload the zip file to the Lambda function
 
 
 ### Use the Lambda function to connect to the RDS instance
 
 
-
-### Handle the Lambda function from the API Gateway
-
-
+[Rds_Query](aws/aws_lambda/Rds_Query.yaml)
 
 ## API Gateway
 
+![](https://i0.wp.com/blog.knoldus.com/wp-content/uploads/2019/04/ApiGateway.png?fit=771%2C461&ssl=1)
 
 ### Create a new API Gateway
 
-#### REST API
+1.  Open the API Gateway console .
+2.  Choose Create API.
+3.  Under HTTP API, choose Build.
+4.  Choose Add integration, and then choose an AWS Lambda function or enter an HTTP endpoint.
+5.  For Name, enter a name for your API.
+6.  Choose Review and create.
+7.  Choose Create.
 
+#### REST API
+Use the REST API to create a new API Gateway
+- Reference: 
+  - https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-getting-started-with-rest-apis.html
+  - https://www.codecademy.com/article/what-is-rest
+
+![What is REST](https://raw.githubusercontent.com/Codecademy/articles/0b631b51723fbb3cc652ef5f009082aa71916e63/images/rest_api.svg)
+
+##### Making Requests
+
+REST requires that a client make a request to the server in order to retrieve or modify data on the server. A request generally consists of:
+
+-   an HTTP verb, which defines what kind of operation to perform
+-   a _header_, which allows the client to pass along information about the request
+-   a path to a resource
+-   an optional message body containing data
+
+##### HTTP Verbs
+
+There are 4 basic HTTP verbs we use in requests to interact with resources in a REST system:
+
+-   GET — retrieve a specific resource (by id) or a collection of resources
+-   POST — create a new resource
+-   PUT — update a specific resource (by id)
+-   DELETE — remove a specific resource by id
 
 ---
 
@@ -187,6 +216,60 @@ The result will be shown like this
 
 --- 
 
+# MCU
+
+
+## Hardware
+
+Useing the following hardware
+- ESP32
+- Anyleaf Soil Moisture Sensor
+- DS18B20 Digital Temperature Sensor
+- DHT22 humidity and temperature sensor
+- PH Sensor 
+- Usb(Optinal)
+
+## Pinout
+
+| ESP32 | Sensor |
+|:-------------------------:|:-------------------------:|
+| 3v3 | VCC |
+| GND | GND |
+| 25 | DHT22 |
+| 26 | DS18B20 |
+| 34(A0) | PH Sensor |
+| 13 | RXPin |
+| 12 | TXPin |
+
+### Pin Diagram 
+
+![](https://i0.wp.com/randomnerdtutorials.com/wp-content/uploads/2018/08/ESP32-DOIT-DEVKIT-V1-Board-Pinout-36-GPIOs-updated.jpg?resize=750%2C538&quality=100&strip=all&ssl=1)
+
+
+## Software
+
+## Setup
+1. Open PlatformIO plugin in VScode
+2. Open the project folder `mcu`
+3. Open `src/main.cpp`
+4. Replace the `ssid` and `password` with your wifi ssid and password
+5. Upload the code to the ESP32
+   - If the update failed, you can try to change the `upload_port` in `platformio.ini` to the port of your ESP32
+   - If the terminal showing Connecting.......... and took a long time to load, you can try to press the `boot` button on the ESP32 and upload the code again
+6. Open the serial monitor and you will see the result
+7. If you don't want to use the serial monitor, you can comment the `Serial.begin(115200)` and `Serial.println()` in `src/main.cpp`'
+
+### Defult ini setting
+
+``` txt
+[env:esp32dev]
+platform = espressif32
+board = esp32dev
+framework = arduino
+monitor_speed = 115200
+```
+
+---
 # To do list
 
 `src/Dynamically_plot.py` 要加入即時從資料庫抓數據更新的功能

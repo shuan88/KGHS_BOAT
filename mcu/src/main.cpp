@@ -316,7 +316,7 @@ void loop() {
 
   // if latitude and longitude are not zero, save to longitude and latitude
   // else, useing the random number to simulate the data
-  // range base on latitude,longitude= 22.625266504508858,120.29873388752162 +-5%
+  // range base on latitude,longitude= 22.625266504508858,120.29873388752162 +-0.5%
 
   float longitude = 0;
   float latitude = 0;
@@ -324,8 +324,8 @@ void loop() {
     longitude = GPS.longitude;
     latitude = GPS.latitude;
   } else {
-    longitude = 120.29873388752162 + random(-5, 5) / 100.0;
-    latitude = 22.625266504508858 + random(-5, 5) / 100.0;
+    longitude = 120.29873388752162 + random(-5, 5) / 1E-7;
+    latitude = 22.625266504508858 + random(-5, 5) / 1E-7;
   }
 
 
@@ -333,7 +333,8 @@ void loop() {
   // Serial.println(serverPath);
   // http.begin(serverPath.c_str());
   // String httpRequestData = "{\"latitude\": \"" + String(random(0, 100)) + "\", \"longitude\": \"" + String(random(0, 100)) + "\", \"O_Hum\": \"" + String(hum) + "\", \"O_Temp\": \"" + String(temp) + "\", \"PH\": \"" + String(phValue) + "\", \"TDS\": \"" + String(ecValue) + "\", \"W_Temp\": \"" + String(temperature) + "\"}";
-  String httpRequestData = "{\"latitude\": \"" + String(latitude,7) + "\", \"longitude\": \"" + String(longitude,7) + "\", \"O_Hum\": \"" + String(hum) + "\", \"O_Temp\": \"" + String(temp) + "\", \"PH\": \"" + String(phValue) + "\", \"TDS\": \"" + String(ecValue) + "\", \"W_Temp\": \"" + String(temperature) + "\"}";
+  String httpRequestData = "{\"latitude\": \"" + String(latitude,9) + "\", \"longitude\": \"" + String(longitude,9) + "\", \"O_Hum\": \"" + String(hum) + "\", \"O_Temp\": \"" + String(temp) + "\", \"PH\": \"" + String(phValue) + "\", \"TDS\": \"" + String(ecValue) + "\", \"W_Temp\": \"" + String(temperature) + "\"}";
+
 
   Serial.println(httpRequestData);
   // Initialize the http connection
@@ -349,9 +350,7 @@ void loop() {
   Serial.println(payload);
   http.end();
 
-  delay(3000);
+  delay(5000);
 
-
-  delay(2000);
 
 }
